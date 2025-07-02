@@ -1,3 +1,10 @@
+/**
+ * @file oa_allocator.h
+ * @brief This is a C version of the C++ offset allocator by Sebastian Aaltonen.
+ * @author Sebastian Aaltonen (original C++ version)
+ * @author Peter Rigby (C version)
+ */
+
 #ifndef OA_ALLOCATOR_INCLUDE_H
 #define OA_ALLOCATOR_INCLUDE_H
 
@@ -306,13 +313,58 @@ extern "C" {
         gpu_allocator->m_freeStorage -= node->dataSize;
     }
 
-    OA_API oa_size oa_CalculateAllocatorSize(oa_uint max_allocations);
-    OA_API oa_uint oa_AllocationSize(oa_allocator_t *gpu_allocator, oa_allocation_t allocation);
-    OA_API oa_storage_report_t oa_StorageReport(oa_allocator_t *gpu_allocator);
-    OA_API oa_storage_report_full_t oa_StorageReportFull(oa_allocator_t *gpu_allocator);
-    OA_API oa_allocator_t *oa_CreateAllocator(void *memory, oa_uint size, oa_uint max_allocations);
-    OA_API oa_allocation_t oa_Allocate(oa_allocator_t *gpu_allocator, oa_uint size);
-    OA_API void oa_Free(oa_allocator_t *gpu_allocator, oa_allocation_t allocation);
+    /**
+	 * @brief Calculates the total memory size required for the allocator, including its internal structures.
+	 * @param max_allocations The maximum number of allocations that can be active at any given time.
+	 * @return The total memory size required for the allocator.
+	 */
+	OA_API oa_size oa_CalculateAllocatorSize(oa_uint max_allocations);
+
+	/**
+	 * @brief Retrieves the size of a given allocation.
+	 * @param gpu_allocator A pointer to the allocator.
+	 * @param allocation The allocation to get the size of.
+	 * @return The size of the allocation in bytes.
+	 */
+	OA_API oa_uint oa_AllocationSize(oa_allocator_t *gpu_allocator, oa_allocation_t allocation);
+
+	/**
+	 * @brief Generates a brief report on the allocator's storage.
+	 * @param gpu_allocator A pointer to the allocator.
+	 * @return A report containing the total free space and the largest free region.
+	 */
+	OA_API oa_storage_report_t oa_StorageReport(oa_allocator_t *gpu_allocator);
+
+	/**
+	 * @brief Generates a detailed report on the allocator's storage, including a breakdown of free regions.
+	 * @param gpu_allocator A pointer to the allocator.
+	 * @return A detailed report on the allocator's storage.
+	 */
+	OA_API oa_storage_report_full_t oa_StorageReportFull(oa_allocator_t *gpu_allocator);
+
+	/**
+	 * @brief Creates a new allocator instance.
+	 * @param memory A pointer to a block of memory to be used for the allocator.
+	 * @param size The total size of the memory block.
+	 * @param max_allocations The maximum number of allocations that can be active at any given time.
+	 * @return A pointer to the newly created allocator.
+	 */
+	OA_API oa_allocator_t *oa_CreateAllocator(void *memory, oa_uint size, oa_uint max_allocations);
+
+	/**
+	 * @brief Allocates a block of memory from the allocator.
+	 * @param gpu_allocator A pointer to the allocator.
+	 * @param size The size of the memory block to allocate.
+	 * @return An allocation handle, or an invalid handle if the allocation fails.
+	 */
+	OA_API oa_allocation_t oa_Allocate(oa_allocator_t *gpu_allocator, oa_uint size);
+
+	/**
+	 * @brief Frees a previously allocated block of memory.
+	 * @param gpu_allocator A pointer to the allocator.
+	 * @param allocation The allocation to free.
+	 */
+	OA_API void oa_Free(oa_allocator_t *gpu_allocator, oa_allocation_t allocation);
 
 #ifdef __cplusplus
 }

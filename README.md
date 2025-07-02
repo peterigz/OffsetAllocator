@@ -39,12 +39,56 @@ The allocation metadata is stored in a separate data structure, making this allo
 232->2147483648 233->2415919104 234->2684354560 235->2952790016 236->3221225472 237->3489660928 238->3758096384 239->4026531840
 ```
 
-## Integration
+## C Version
+This repository also includes a C version of the allocator, which can be found in `oa_allocator.h`. The C version is a single-header library, so you can just drop it into your project and start using it. To use the implementation, you must define `OA_IMPLEMENTATION` in one of your C files before including the header.
+
+### How to use the C version
+
+```c
+#define OA_IMPLEMENTATION
+#include "oa_allocator.h"
+
+int main() {
+    // Calculate the required memory for the allocator.
+    // This is based on the maximum number of allocations you expect to have active at any given time.
+    oa_size allocator_size = oa_CalculateAllocatorSize(100);
+    void *memory = malloc(allocator_size);
+
+    // Create the allocator instance.
+    // The first parameter is the memory block we just allocated.
+    // The second parameter is the total size of the memory you want to manage with this allocator.
+    // The third parameter is the maximum number of allocations which must be the same as you specified with oa_CalculateAllocatorSize.
+    oa_allocator_t *allocator = oa_CreateAllocator(memory, 12345, 100);
+
+    // Allocate a block of 1337 elements (could be bytes or array elements etc.).
+    oa_allocation_t a = oa_Allocate(allocator, 1337);
+    oa_uint offset_a = a.offset;
+    // do_something(offset_a);
+
+    // Allocate a block of 123 elements.
+    oa_allocation_t b = oa_Allocate(allocator, 123);
+    oa_uint offset_b = b.offset;
+    // do_something(offset_b);
+
+    // Free the allocations.
+    oa_Free(allocator, a);
+    oa_Free(allocator, b);
+
+    // Free the allocator memory.
+    free(memory);
+
+    return 0;
+}
+```
+
+## C++ Version
+
+### Integration
 CMakeLists.txt exists for cmake folder include. Alternatively, just copy the OffsetAllocator.cpp and OffsetAllocator.hpp in your project. No other files are needed.
 
-## How to use
+### How to use
 
-```
+```cpp
 #include "offsetAllocator.hpp"
 using namespace OffsetAllocator;
 
